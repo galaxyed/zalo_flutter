@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _initZaloFlutter() async {
     if (Platform.isAndroid) {
-      final String? hashKey = await ZaloFlutter.getHashKeyAndroid();
+      final String? hashKey = await ZaloFlutter.instance.getHashKeyAndroid();
       log('HashKey: $hashKey');
     }
   }
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 CommonButton(
                   text: 'logout',
                   onPressed: () async {
-                    await ZaloFlutter.logout();
+                    await ZaloFlutter.instance.logout();
                     _indexReset++;
                     _key = ValueKey<String>(_indexReset.toString());
                     setState(() {});
@@ -82,81 +82,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 CommonButton(
                   text: 'isLogin',
                   onPressed: () async {
-                    final bool data = await ZaloFlutter.isLogin();
-                    final String? x = data.toString();
+                    final bool data = await ZaloFlutter.instance.isLogin();
+                    final String x = data.toString();
                     return x;
                   },
                 ),
                 CommonButton(
                   text: 'login',
                   onPressed: () async {
-                    final ZaloLogin data = await ZaloFlutter.login();
+                    final ZaloLogin data = await ZaloFlutter.instance.login();
                     return jsonEncode(data.toJson());
-                  },
-                ),
-                CommonButton(
-                  text: 'getUserProfile',
-                  onPressed: () async {
-                    final ZaloProfile data = await ZaloFlutter.getUserProfile();
-                    return jsonEncode(data.toJson());
-                  },
-                ),
-                CommonButton(
-                  text: 'getUserFriendList',
-                  onPressed: () async {
-                    final ZaloUserFriend data =
-                        await ZaloFlutter.getUserFriendList(
-                      atOffset: 0,
-                      count: 3,
-                    );
-                    return jsonEncode(data.toJson());
-                  },
-                ),
-                CommonButton(
-                  text: 'getUserInvitableFriendList',
-                  onPressed: () async {
-                    final ZaloUserFriend data =
-                        await ZaloFlutter.getUserInvitableFriendList(
-                      atOffset: 0,
-                      count: 3,
-                    );
-                    final String rs = jsonEncode(data.toJson());
-                    return rs;
-                  },
-                ),
-                CommonButton(
-                  text: 'sendMessage',
-                  onPressed: () async {
-                    final ZaloSendMessage data = await ZaloFlutter.sendMessage(
-                      to: zaloId,
-                      message: zaloMessage,
-                      link: zaloLink,
-                    );
-                    final String rs = jsonEncode(data.toJson());
-                    return rs;
-                  },
-                ),
-                CommonButton(
-                  text: 'postFeed',
-                  onPressed: () async {
-                    final ZaloPostFeed data = await ZaloFlutter.postFeed(
-                      message: zaloMessage,
-                      link: zaloLink,
-                    );
-                    final String rs = jsonEncode(data.toJson());
-                    return rs;
-                  },
-                ),
-                CommonButton(
-                  text: 'sendAppRequest',
-                  onPressed: () async {
-                    final ZaloSendAppRequest data =
-                        await ZaloFlutter.sendAppRequest(
-                      to: <String>[zaloId],
-                      message: zaloMessage,
-                    );
-                    final String rs = jsonEncode(data.toJson());
-                    return rs;
                   },
                 ),
               ],
@@ -220,8 +155,7 @@ class _CommonButtonState extends State<CommonButton> {
       }
       String data;
       try {
-        final Map<String, dynamic>? object =
-            jsonDecode(text) as Map<String, dynamic>?;
+        final Map<String, dynamic>? object = jsonDecode(text) as Map<String, dynamic>?;
         data = const JsonEncoder.withIndent('  ').convert(object);
       } catch (e) {
         data = text;
