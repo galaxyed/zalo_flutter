@@ -95,7 +95,7 @@ class ZaloFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     @Throws(Exception::class)
     private fun login(result: Result) {
-        zaloInstance.unauthenticate()
+//        zaloInstance.unauthenticate()
         val listener: OAuthCompleteListener = object : OAuthCompleteListener() {
             override fun onGetOAuthComplete(response: OauthResponse) {
                 val error: MutableMap<String, Any?> = HashMap()
