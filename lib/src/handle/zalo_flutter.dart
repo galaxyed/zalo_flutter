@@ -45,4 +45,14 @@ class ZaloFlutter {
     final ZaloLogin data = ZaloLogin.fromJson(rs);
     return data;
   }
+
+  /// * Check login status of zalo app
+  /// * Status:
+  /// *   + 1: logged in
+  /// *   + 0: not logged in
+  /// *   + <0: error, ie. app zalo not installed>
+  Future<bool> checkLoginStatus() async {
+    final int? rs = await channel.invokeMethod<int?>('getStatusLoginZalo');
+    return rs == 1;
+  }
 }
