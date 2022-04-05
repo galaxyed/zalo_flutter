@@ -64,6 +64,7 @@ class ZaloFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 "getHashKey" -> getHashKey(result)
                 "logout" -> logout(result)
                 "isAuthenticated" -> isAuthenticated(result)
+                "getStatusLoginZalo" -> getStatusLoginZalo(result)
                 "login" -> login(result)
                 else -> {
                     result.notImplemented()
@@ -95,7 +96,6 @@ class ZaloFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     @Throws(Exception::class)
     private fun login(result: Result) {
-        zaloInstance.unauthenticate()
         val listener: OAuthCompleteListener = object : OAuthCompleteListener() {
             override fun onGetOAuthComplete(response: OauthResponse) {
                 val error: MutableMap<String, Any?> = HashMap()
@@ -136,6 +136,10 @@ class ZaloFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         result.success(null)
     }
 
+    @Throws(Exception::class)
+    private fun getStatusLoginZalo(result: Result) {
+        zaloInstance.getZaloLoginStatus { status -> result.success(status) }
+    }
 }
 
 private object AppHelper {
