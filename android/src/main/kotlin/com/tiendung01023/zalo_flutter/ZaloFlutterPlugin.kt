@@ -66,6 +66,7 @@ class ZaloFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 "logout" -> logout(result)
                 "validateRefreshToken" -> validateRefreshToken(call, result)
                 "login" -> login(call, result)
+                "getAccessToken" -> getAccessToken(call, result)
                 "getUserProfile" -> getUserProfile(call, result)
                 "getUserFriendList" -> getUserFriendList(call, result)
                 "getUserInvitableFriendList" -> getUserInvitableFriendList(call, result)
@@ -123,8 +124,17 @@ class ZaloFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val listener: OAuthCompleteListener = object : OAuthCompleteListener() {
             override fun onGetOAuthComplete(response: OauthResponse) {
+                val error: MutableMap<String, Any?> = HashMap()
+                error["errorCode"] = response.errorCode
+                error["errorMessage"] = response.errorMessage
                 val oauthCode = response.oauthCode
-                zaloInstance.getAccessTokenByOAuthCode(activity, oauthCode, codeVerifier, withZOGraphCallBack(result))
+                val data: MutableMap<String, Any?> = HashMap()
+                data["oauthCode"] = oauthCode
+                data["codeVerifier"] = codeVerifier
+                val map: MutableMap<String, Any?> = HashMap()
+                map["isSuccess"] = true
+                map["data"] = data
+                result.success(map)
             }
 
             override fun onAuthenError(errorResponse: ErrorResponse?) {
@@ -142,6 +152,16 @@ class ZaloFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
         }
         zaloInstance.authenticateZaloWithAuthenType(activity, LoginVia.APP_OR_WEB, codeChallenge, extInfo, listener)
+    }
+
+    @Throws(Exception::class)
+    private fun getAccessToken(call: MethodCall, result: Result) {
+        val arguments = call.arguments as Map<*, *>
+
+        val codeVerifier = arguments["codeVerifier"] as String
+        val oauthCode = arguments["oauthCode"] as String
+
+        zaloInstance.getAccessTokenByOAuthCode(activity, oauthCode, codeVerifier, withZOGraphCallBack(result))
     }
 
     @Throws(Exception::class)
