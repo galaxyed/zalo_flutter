@@ -34,6 +34,9 @@ public class SwiftZaloFlutterPlugin: NSObject, FlutterPlugin {
         case "login":
             login(call, result)
             break
+        case "getAccessToken":
+            getAccessToken(call, result)
+            break
         case "getUserProfile":
             getUserProfile(call, result)
             break
@@ -107,7 +110,20 @@ public class SwiftZaloFlutterPlugin: NSObject, FlutterPlugin {
                 let errorMessage = authenResponse.errorMessage
                 let oauthCode = authenResponse.oauthCode
                 if (authenResponse.isSucess == true) {
-                    ZaloSDK.sharedInstance().getAccessToken(withOAuthCode: oauthCode, codeVerifier: codeVerifier, completionHandler: self.withZOTokenResponseObjectCallBack(result: result))
+                    let error : [String : Any?] = [
+                        "errorCode": errorCode,
+                        "errorMessage": errorMessage,
+                    ]
+                    let data : [String : Any?] = [
+                        "oauthCode": oauthCode,
+                        "codeVerifier": codeVerifier,
+                    ]
+                    let map : [String : Any?] = [
+                        "isSuccess": true,
+                        "error": error,
+                        "data": data
+                    ]
+                    result(map)
                 } else {
                     let error : [String : Any?] = [
                         "errorCode": errorCode,
@@ -132,6 +148,15 @@ public class SwiftZaloFlutterPlugin: NSObject, FlutterPlugin {
                 result(map)
             }
         }
+    }
+
+    func getAccessToken(_ call: FlutterMethodCall,_ result: @escaping FlutterResult) {
+        let arguments = call.arguments as! Dictionary<String, Any>
+
+        let codeVerifier = arguments["codeVerifier"] as! String
+        let oauthCode = arguments["oauthCode"] as! String
+
+        ZaloSDK.sharedInstance().getAccessToken(withOAuthCode: oauthCode, codeVerifier: codeVerifier, completionHandler: self.withZOTokenResponseObjectCallBack(result: result))
     }
 
     func getUserProfile(_ call: FlutterMethodCall,_ result: @escaping FlutterResult) {
