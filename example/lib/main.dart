@@ -118,7 +118,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     _accessToken = null;
                     _refreshToken = null;
                     await ZaloFlutter.instance.logout();
-
                     _indexReset++;
                     _key = ValueKey<String>(_indexReset.toString());
                     setState(() {});

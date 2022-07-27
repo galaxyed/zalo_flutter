@@ -25,7 +25,6 @@ class ZaloFlutter {
     _timeout = timeout;
   }
 
-  /// * Lấy HashKey của Android để đăng ký trong dashboard Zalo
   /// * Get HashKey Android for register app in dashboard Zalo
   /// * Dashboard: https://developers.zalo.me/app/{your_app_id}/login
   Future<String?> getHashKeyAndroid() async {
@@ -54,7 +53,6 @@ class ZaloFlutter {
     return rs;
   }
 
-  /// * Đăng xuất - SDK xóa oauth code trong cache
   /// * Logout - SDK clear oauth code in cache
   /// * More info Android: https://developers.zalo.me/docs/sdk/android-sdk/dang-nhap/dang-xuat-post-6020
   /// * More info Ios: https://developers.zalo.me/docs/sdk/ios-sdk/dang-nhap/dang-xuat-post-5728
@@ -80,7 +78,6 @@ class ZaloFlutter {
     return rs == true;
   }
 
-  /// * Đăng nhập
   /// * Authenticate (with app or webview)
   /// * More info Android: https://developers.zalo.me/docs/sdk/android-sdk/dang-nhap/dang-nhap-post-6027
   /// * More info Ios: https://developers.zalo.me/docs/sdk/ios-sdk/dang-nhap/dang-nhap-post-6006
