@@ -37,6 +37,7 @@ class ZaloFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var activity: Activity
 
     private val zaloInstance = ZaloSDK.Instance
+    private val zaloOpenApi = OpenAPIService()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         context = flutterPluginBinding.applicationContext
@@ -146,7 +147,7 @@ class ZaloFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val map: MutableMap<String, Any?> = HashMap()
                 map["isSuccess"] = false
                 map["error"] = error
-                map["data"] = null
+                map["data"] = data
                 result.success(map)
             }
         }
@@ -337,6 +338,15 @@ private object AppHelper {
             e.printStackTrace()
             return ""
         }
+    }
+
+    @Throws(JSONException::class)
+    fun jsonToMap(json: JSONObject): Map<String, Any?> {
+        var map: Map<String, Any?> = HashMap()
+        if (json !== JSONObject.NULL) {
+            map = fromMap(json)
+        }
+        return map
     }
 
     @Throws(JSONException::class)
