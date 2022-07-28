@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -37,7 +37,7 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api "me.zalo:sdk-core:2.6.0428"
-    api "me.zalo:sdk-auth:2.6.0428"
-    api "me.zalo:sdk-openapi:2.6.0428"
+    api "me.zalo:sdk-core:4.0.1020"
+    api "me.zalo:sdk-auth:4.0.1020"
+    api "me.zalo:sdk-openapi:4.0.1020"
 }

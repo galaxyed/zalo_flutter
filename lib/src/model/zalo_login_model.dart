@@ -29,13 +29,13 @@ class ZaloLoginData {
       return;
     }
     oauthCode = map['oauthCode'] as String?;
-    userId = map['userId'] as String?;
+    codeVerifier = map['codeVerifier'] as String?;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> map = <String, dynamic>{};
     map['oauthCode'] = oauthCode;
-    map['userId'] = userId;
+    map['codeVerifier'] = codeVerifier;
     return map;
   }
 
@@ -43,5 +43,5 @@ class ZaloLoginData {
   String? oauthCode;
 
   /// Use for android and ios
-  String? userId;
+  String? codeVerifier;
 }

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:zalo_flutter/src/model/zalo_login_model.dart';
 import 'package:zalo_flutter/zalo_flutter.dart';
 
 void main() => runApp(const MyApp());
@@ -32,9 +32,15 @@ class _MyHomePageState extends State<MyHomePage> {
   int _indexReset = -1;
   ValueKey<String> _key = const ValueKey<String>('');
 
-  String zaloId = '';
-  String zaloMessage = '';
-  String zaloLink = '';
+  String zaloId = '2961857761415564889';
+  String zaloMessage = 'Hello';
+  String zaloLink = 'www.google.com';
+
+  String? _accessToken;
+  String? _refreshToken;
+
+  String? _oauthCode;
+  String? _codeVerifier;
 
   @override
   void initState() {
@@ -70,8 +76,47 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 ),
                 CommonButton(
+                  text: 'login',
+                  onPressed: () async {
+                    final ZaloLogin data = await ZaloFlutter.instance.login();
+                    try {
+                      if (data.isSuccess == true) {
+                        setState(() {
+                          _codeVerifier = data.data?.codeVerifier;
+                          _oauthCode = data.data?.oauthCode;
+                        });
+                      }
+                    } catch (e) {
+                      print('login: $e');
+                    }
+                    return data.toJson();
+                  },
+                ),
+                CommonButton(
+                  text: 'getAccessToken',
+                  onPressed: () async {
+                    final Map<dynamic, dynamic>? data =
+                        await ZaloFlutter.instance.getAccessToken(oauthCode: _oauthCode, codeVerifier: _codeVerifier);
+                    if (data?['isSuccess'] == true) {
+                      setState(() {
+                        _accessToken = data?['data']['access_token'] as String?;
+                        _refreshToken = data?['data']['refresh_token'] as String?;
+                      });
+                    }
+
+                    try {
+                      print('login: $data');
+                    } catch (e) {
+                      print('login: $e');
+                    }
+                    return data;
+                  },
+                ),
+                CommonButton(
                   text: 'logout',
                   onPressed: () async {
+                    _accessToken = null;
+                    _refreshToken = null;
                     await ZaloFlutter.instance.logout();
                     _indexReset++;
                     _key = ValueKey<String>(_indexReset.toString());
@@ -80,18 +125,32 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 ),
                 CommonButton(
-                  text: 'isLogin',
+                  text: 'validateRefreshToken',
                   onPressed: () async {
-                    final bool data = await ZaloFlutter.instance.isLogin();
-                    final String x = data.toString();
-                    return x;
+                    final bool data = await ZaloFlutter.instance.validateRefreshToken(
+                      refreshToken: _refreshToken ?? '',
+                    );
+                    return data.toString();
                   },
                 ),
                 CommonButton(
-                  text: 'login',
+                  text: 'getUserProfile',
                   onPressed: () async {
-                    final ZaloLogin data = await ZaloFlutter.instance.login();
-                    return jsonEncode(data.toJson());
+                    final Map<dynamic, dynamic>? data = await ZaloFlutter.instance.getUserProfile(
+                      accessToken: _accessToken ?? '',
+                    );
+                    return data;
+                  },
+                ),
+                CommonButton(
+                  text: 'shareMessage',
+                  onPressed: () async {
+                    final bool result = await ZaloFlutter.instance.shareMessage(
+                      link: 'https://huuksocialproduction.page.link/nHKZ',
+                      message: 'assadda',
+                      appName: 'Huuk Social',
+                    );
+                    return result;
                   },
                 ),
               ],
@@ -112,7 +171,7 @@ class CommonButton extends StatefulWidget {
   }) : super(key: key);
 
   final String text;
-  final Future<String?> Function() onPressed;
+  final Future<dynamic> Function() onPressed;
   final Color color;
 
   @override
@@ -141,7 +200,14 @@ class _CommonButtonState extends State<CommonButton> {
         _showLoading(context);
         final DateTime time = DateTime.now();
         print('[$time][commonButton] ${widget.text}');
-        result = await widget.onPressed();
+        final dynamic data = await widget.onPressed();
+        if (data == null) {
+          result = 'null';
+        } else if (data is String) {
+          result = data;
+        } else if (data is Map) {
+          result = jsonEncode(data);
+        }
         setState(() {});
         Navigator.pop(context);
       },
